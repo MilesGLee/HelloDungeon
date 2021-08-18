@@ -12,17 +12,26 @@ namespace HelloDungeon
         public bool inCombat;
         public int maxSearches;
         public bool beatenSheriff = false;
+        public List<string> allSpells = new List<string>();
+        public bool shopType;
+        public string shopSlot1;
+        public string shopSlot2;
+        public string shopSlot3;
+        public int shopCost;
+
         public void Run()
         {
+            ListSpells();
             Console.Title = "Hocus Pocus Cowboys: A text-based roguelite";
             MainMenu();
-
+            
         }
 
         //Player Variables
         public class Player
         {
             public int lvl; //player level
+            public int cash; //Player money
             public int hp; //player hp
             public int maxHP; //player hp
             public int atk; //player attack power
@@ -33,11 +42,13 @@ namespace HelloDungeon
             public int crit; //player critical hit chance
             public int searches; //amount of times player can search
             public int luck; //chance manipulating stat
-            public List<string> Items = new List<string>();
-        }
+            public int casts; //chance manipulating stat
+            public List<string> Items = new List<string>(); //Item List
+            public List<string> Spells = new List<string>(); //Spell list
+        } //Da player class, what else you expect?
 
         public Player player = new Player();
-        public void InitializePlayer(int LVL, int HP, int MAXHP, int ATK, int ARM, int WARD, int EXP, int MAXEXP, int CRIT, int SEARCHES, int LUCK)
+        public void InitializePlayer(int LVL, int CASH, int HP, int MAXHP, int ATK, int ARM, int WARD, int EXP, int MAXEXP, int CRIT, int SEARCHES, int LUCK, int CASTS)
         {
             player.lvl = LVL;
             player.hp = HP;
@@ -50,6 +61,8 @@ namespace HelloDungeon
             player.crit = CRIT;
             player.searches = SEARCHES;
             player.luck = LUCK;
+            player.cash = CASH;
+            player.casts = CASTS;
         } //Setup player stats
         //Entity Variables
         public class Entity
@@ -75,6 +88,12 @@ namespace HelloDungeon
             inCombat = true;
         } //Streamlined proccess of making enemies 
         //Public Runtime Voids
+        public void ListSpells() 
+        {
+            allSpells.Add("Distracting Tumbleweed");
+            allSpells.Add("Houdini Rounds");
+            allSpells.Add("Summon Mead");
+        } //Add spells to AllSpells list
         public void TextHelp()
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -87,6 +106,7 @@ namespace HelloDungeon
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine("----------Player Stats----------");
             Console.WriteLine($"Level: {player.lvl} ({player.exp}/{player.maxexp})");
+            Console.WriteLine($"Cash: ${player.cash}");
             Console.WriteLine($"Health: {player.hp}");
             Console.WriteLine($"Attack Power: {player.atk}");
             Console.WriteLine($"Armor: {player.arm}");
@@ -98,16 +118,24 @@ namespace HelloDungeon
             {
                 Console.WriteLine($"[{player.Items.FindIndex(0, player.Items.Count, A.StartsWith)}]:{A}");
             }
+            Console.WriteLine("----------Player Spells---------");
+            Console.WriteLine($"!> You know [{player.Spells.Count}] cantrips. And have {player.casts} casts remaining");
+            foreach (string A in player.Spells)
+            {
+                Console.WriteLine($"[{player.Spells.FindIndex(0, player.Spells.Count, A.StartsWith)}]:{A}");
+            }
             Console.WriteLine("--------------------------------");
 
-        } // Prints players stats
-        public void SearchGame() //Random event selection
+        } //Prints players stats
+        public void SearchGame() 
         {
             nearbyItem = 0;
             player.searches -= 1;
             Random rnd = new Random();
             int roll = rnd.Next(1, 200); // creates a number between 1 and 200
-            if (roll > (100 - player.ward)) 
+            int roll2 = rnd.Next(1, 3); // creates a number between 1 and 2
+            bool test = false;
+            if (roll > (100 - player.ward) && roll2 == 1 && test == true) 
             {
                 int itemRoll = rnd.Next(1, 8);
                 if (itemRoll == 1)
@@ -211,7 +239,27 @@ namespace HelloDungeon
                     nearbyItem = itemRoll;
                 }
             } //Player found an item event
-            if (roll < (100 - player.ward)) 
+            if (roll > (100 - player.ward) && roll2 == 2)
+            {
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.WriteLine("You turn a courner and encounter a spellsmith, offering you goods...");
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.WriteLine("[Spellsmith]: Howdy outsider. I have many a spells for you to pick from...");
+                int spellRoll = rnd.Next(1, (allSpells.Count));
+                int spellRoll2 = rnd.Next(1, (allSpells.Count));
+                int spellRoll3 = rnd.Next(1, (allSpells.Count));
+                string slot1 = allSpells[spellRoll];
+                string slot2 = allSpells[spellRoll2];
+                string slot3 = allSpells[spellRoll3];
+                shopCost = 60;
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine($"1:{slot1} ${shopCost}, 2:{slot2} ${shopCost}, 3:{slot3} ${shopCost}");
+                shopType = false;
+                shopSlot1 = slot1;
+                shopSlot2 = slot2;
+                shopSlot3 = slot3;
+            } //Player encounters a spellsmith
+            if (roll < (100 - player.ward) && test == true) 
             {
                 int lvl = rnd.Next(stage, (stage * 3));
                 if (stage == 1)
@@ -221,7 +269,7 @@ namespace HelloDungeon
                 if (stage == 3)
                     CreateEntity("Amalgamation", lvl, 20 + (10 * lvl), 12 + (2 * lvl), 3 + (2 * lvl), false);
             } //Player encounters enemy event
-        }
+        } //Random event selection
         public void CollectItem()
         {
             if (nearbyItem == 1)
@@ -280,6 +328,26 @@ namespace HelloDungeon
                 nearbyItem = 0;
             } //Warding Stone
         } //Collecting found items
+        public void BuyItem(int slot) 
+        {
+            if(slot == 1 && player.Spells.Contains(shopSlot1) == false)
+                player.cash -= shopCost;
+            if (slot == 2 && player.Spells.Contains(shopSlot2) == false)
+                player.cash -= shopCost;
+            if (slot == 3 && player.Spells.Contains(shopSlot3) == false)
+                player.cash -= shopCost;
+            if (slot == 1)
+                player.Spells.Add(shopSlot1);
+            if (slot == 2)
+                player.Spells.Add(shopSlot2);
+            if (slot == 3)
+                player.Spells.Add(shopSlot3);
+            shopSlot1 = null;
+            shopSlot2 = null;
+            shopSlot3 = null;
+            Console.ForegroundColor = ConsoleColor.Gray;
+            Console.WriteLine("[Spellsmith]: Alright enough! Be gone with you...");
+        } //Player buys items from shops
         public void AttackEntity(Entity Victim)
         {
             Random rnd = new Random();
@@ -320,8 +388,9 @@ namespace HelloDungeon
             if (Victim.health <= 0 && Victim.boss == false)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine($"{Victim.name} Defeated! You've gained {(Victim.level + stage) * 20} Exp!");
+                Console.WriteLine($"{Victim.name} Defeated! You've gained {(Victim.level + stage) * 20} Exp! and you've collected ${(stage * 10) + Victim.level}");
                 player.exp += ((Victim.level + stage) * 20);
+                player.cash += (stage * 10) + Victim.level;
                 inCombat = false;
                 if (player.exp >= player.maxexp)
                 {
@@ -339,8 +408,9 @@ namespace HelloDungeon
             if (Victim.health <= 0 && Victim.boss == true)
             {
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"Boss {Victim.name} Defeated! You've gained {(Victim.level + stage) * 20} Exp! And proceed to the next town...");
+                Console.WriteLine($"Boss {Victim.name} Defeated! You've gained {(Victim.level + stage) * 20} Exp! and you've collected ${(stage * 10) + Victim.level}. And proceed to the next town...");
                 player.exp += ((Victim.level + stage) * 20);
+                player.cash += (stage * 10) + Victim.level;
                 inCombat = false;
                 if (player.exp >= player.maxexp)
                 {
@@ -391,6 +461,10 @@ namespace HelloDungeon
                 Console.WriteLine("You were able to nimbly avoid the enemies attack.");
             }
         } //When the player is attacked
+        public void UseSpell() 
+        {
+
+        }
 
         //Scene Voids
         public void MainMenu()
@@ -428,7 +502,7 @@ namespace HelloDungeon
                 command = Console.ReadLine();
             }
             maxSearches = 5;
-            InitializePlayer(1, 100, 100, 10, 0, 0, 0, 100, 1, maxSearches, 0);
+            InitializePlayer(1, 100, 100, 100, 10, 0, 0, 0, 100, 1, maxSearches, 0, 3);
             Stage1();
         }
         public void Stage1()
@@ -441,13 +515,20 @@ namespace HelloDungeon
             string command;
             Console.ForegroundColor = ConsoleColor.Black;
             Console.BackgroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("You arrive in a dusty town in the middle of a desert");
+            Console.WriteLine("You arrive in a dusty town in the middle of a desert... What do you do...");
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write(">", Console.ForegroundColor);
             command = Console.ReadLine();
             while (beatenSheriff == false)
             {
+                
+                if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
+                    BuyItem(1);
+                if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
+                    BuyItem(2);
+                if (inCombat == false && command == "Buy 3" && shopSlot3 != null && player.cash >= shopCost)
+                    BuyItem(3);
                 if (inCombat == false && command == "Challenge Sheriff")
                     CreateEntity("Sheriff of Sandthorough", 7, 150, 10, 0, true);
                 if (inCombat == true && command == $"Attack")
@@ -504,7 +585,7 @@ namespace HelloDungeon
             string command;
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.DarkGreen;
-            Console.Write("You arrive in a seemingly abandoned town...");
+            Console.Write("You arrive in a seemingly abandoned town... What do you do...");
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("");
@@ -512,6 +593,12 @@ namespace HelloDungeon
             command = Console.ReadLine();
             while (beatenSheriff == false)
             {
+                if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
+                    BuyItem(1);
+                if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
+                    BuyItem(2);
+                if (inCombat == false && command == "Buy 3" && shopSlot3 != null && player.cash >= shopCost)
+                    BuyItem(3);
                 if (inCombat == false && command == "Challenge Sheriff")
                     CreateEntity("Undead Sheriff of Rottenburgh", 10, 200, 25, 5, true);
                 if (inCombat == true && command == $"Attack")
@@ -568,7 +655,7 @@ namespace HelloDungeon
             string command;
             Console.ForegroundColor = ConsoleColor.DarkMagenta;
             Console.BackgroundColor = ConsoleColor.White;
-            Console.Write("You waltz into a town so confusing your head begins to swim.");
+            Console.Write("You waltz into a town so confusing your head begins to swim... What do you do...");
             Console.BackgroundColor = ConsoleColor.Black;
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine("");
@@ -576,6 +663,12 @@ namespace HelloDungeon
             command = Console.ReadLine();
             while (beatenSheriff == false)
             {
+                if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
+                    BuyItem(1);
+                if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
+                    BuyItem(2);
+                if (inCombat == false && command == "Buy 3" && shopSlot3 != null && player.cash >= shopCost)
+                    BuyItem(3);
                 if (inCombat == false && command == "Challenge Sheriff")
                     CreateEntity("Psychiff", 15, 400, 40, 15, true);
                 if (inCombat == true && command == $"Attack")
