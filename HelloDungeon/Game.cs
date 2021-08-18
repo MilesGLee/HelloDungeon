@@ -18,6 +18,8 @@ namespace HelloDungeon
         public string shopSlot2;
         public string shopSlot3;
         public int shopCost;
+        public bool distracting;
+        public bool houdini;
 
         public void Run()
         {
@@ -42,13 +44,14 @@ namespace HelloDungeon
             public int crit; //player critical hit chance
             public int searches; //amount of times player can search
             public int luck; //chance manipulating stat
-            public int casts; //chance manipulating stat
+            public int casts; 
+            public int maxcasts; 
             public List<string> Items = new List<string>(); //Item List
             public List<string> Spells = new List<string>(); //Spell list
         } //Da player class, what else you expect?
 
         public Player player = new Player();
-        public void InitializePlayer(int LVL, int CASH, int HP, int MAXHP, int ATK, int ARM, int WARD, int EXP, int MAXEXP, int CRIT, int SEARCHES, int LUCK, int CASTS)
+        public void InitializePlayer(int LVL, int CASH, int HP, int MAXHP, int ATK, int ARM, int WARD, int EXP, int MAXEXP, int CRIT, int SEARCHES, int LUCK, int CASTS, int MAXCASTS)
         {
             player.lvl = LVL;
             player.hp = HP;
@@ -63,6 +66,7 @@ namespace HelloDungeon
             player.luck = LUCK;
             player.cash = CASH;
             player.casts = CASTS;
+            player.maxcasts = MAXCASTS;
         } //Setup player stats
         //Entity Variables
         public class Entity
@@ -134,8 +138,7 @@ namespace HelloDungeon
             Random rnd = new Random();
             int roll = rnd.Next(1, 200); // creates a number between 1 and 200
             int roll2 = rnd.Next(1, 3); // creates a number between 1 and 2
-            bool test = false;
-            if (roll > (100 - player.ward) && roll2 == 1 && test == true) 
+            if (roll > (100 - player.ward) && roll2 == 1) 
             {
                 int itemRoll = rnd.Next(1, 8);
                 if (itemRoll == 1)
@@ -259,7 +262,7 @@ namespace HelloDungeon
                 shopSlot2 = slot2;
                 shopSlot3 = slot3;
             } //Player encounters a spellsmith
-            if (roll < (100 - player.ward) && test == true) 
+            if (roll < (100 - player.ward)) 
             {
                 int lvl = rnd.Next(stage, (stage * 3));
                 if (stage == 1)
@@ -361,6 +364,10 @@ namespace HelloDungeon
                     rerolls--;
                 }
             }
+            if (houdini == true)
+            {
+                critRoll = 0;
+            }
             if (critRoll < player.crit)
             {
                 int critAtk = player.atk * 2;
@@ -426,6 +433,7 @@ namespace HelloDungeon
                 }
                 beatenSheriff = true;
             }
+            houdini = false;
         } //When player attacks and entity
         public void AttackPlayer()
         {
@@ -435,35 +443,66 @@ namespace HelloDungeon
             preHP = player.hp;
             postHP = player.hp - (currEnemy.attack - player.arm);
             damageTaken = preHP - postHP;
-            if (player.arm < damageTaken)
+            if (distracting == false)
             {
-                player.hp -= damageTaken;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"The {currEnemy.name} lashes out at you dealing {damageTaken} damage to you.");
-                if (player.hp < 50 && player.Items.Contains("Infused Flask"))
+                if (player.arm < damageTaken)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                    Console.WriteLine($"After taking a heavy blow you swifty chug your Infused Flask");
-                    player.hp += 50;
-                    player.Items.Remove("Infused Flask");
+                    player.hp -= damageTaken;
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"The {currEnemy.name} lashes out at you dealing {damageTaken} damage to you.");
+                    if (player.hp < 50 && player.Items.Contains("Infused Flask"))
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                        Console.WriteLine($"After taking a heavy blow you swifty chug your Infused Flask");
+                        player.hp += 50;
+                        player.Items.Remove("Infused Flask");
+                    }
+                    if (player.hp <= 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.WriteLine($"You have died... You made it a total of {stage} stages. Better luck next time");
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Environment.Exit(0);
+                    }
                 }
-                if (player.hp <= 0)
+                else
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine($"You have died... You made it a total of {stage} stages. Better luck next time");
-                    Console.ForegroundColor = ConsoleColor.Black;
-                    Environment.Exit(0);
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("You were able to nimbly avoid the enemies attack.");
                 }
             }
-            else
+            else 
             {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine("You were able to nimbly avoid the enemies attack.");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"The {currEnemy.name} tries to attack you, but misses due to a tumbleweed rolling by that caught its eye");
+                distracting = false;
             }
         } //When the player is attacked
-        public void UseSpell() 
+        public void UseSpell(string spell) 
         {
-
+            if (spell == allSpells[0]) 
+            {
+                distracting = true;
+                player.casts -= 1;
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("Distracting Tumbleweed has been successfully casted, the next attack against you will surley miss");
+            }
+            if (spell == allSpells[1])
+            {
+                houdini = true;
+                player.casts -= 1;
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("Houdini Rounds has been successfully casted, your next attack has a 100% chance to critical strike");
+            }
+            if (spell == allSpells[2])
+            {
+                player.hp += 50;
+                if (player.hp > player.maxHP)
+                    player.hp = player.maxHP;
+                player.casts -= 1;
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.WriteLine("Summon Mead has been successfully casted, you got a nice swig from your mead, you healed for 50 health");
+            }
         }
 
         //Scene Voids
@@ -502,12 +541,13 @@ namespace HelloDungeon
                 command = Console.ReadLine();
             }
             maxSearches = 5;
-            InitializePlayer(1, 100, 100, 100, 10, 0, 0, 0, 100, 1, maxSearches, 0, 3);
+            InitializePlayer(1, 100, 100, 100, 10, 0, 0, 0, 100, 1, maxSearches, 0, 3, 3);
             Stage1();
         }
         public void Stage1()
         {
             beatenSheriff = false;
+            player.casts = player.maxcasts;
             player.searches = maxSearches;
             stage = 1;
             bool damageCheck = false;
@@ -522,7 +562,12 @@ namespace HelloDungeon
             command = Console.ReadLine();
             while (beatenSheriff == false)
             {
-                
+                if (command == $"Cast {allSpells[0]}" && player.casts > 0)
+                    UseSpell(allSpells[0]);
+                if (command == $"Cast {allSpells[1]}" && player.casts > 0)
+                    UseSpell(allSpells[1]);
+                if (command == $"Cast {allSpells[2]}" && player.casts > 0)
+                    UseSpell(allSpells[2]);
                 if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
                     BuyItem(1);
                 if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
