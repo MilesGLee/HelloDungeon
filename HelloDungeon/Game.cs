@@ -26,7 +26,6 @@ namespace HelloDungeon
             ListSpells();
             Console.Title = "Hocus Pocus Cowboys: A text-based roguelite";
             MainMenu();
-            
         }
 
         //Player Variables
@@ -254,9 +253,9 @@ namespace HelloDungeon
                 Console.WriteLine("You turn a courner and encounter a spellsmith, offering you goods...");
                 Console.ForegroundColor = ConsoleColor.Gray;
                 Console.WriteLine("[Spellsmith]: Howdy outsider. I have many a spells for you to pick from...");
-                int spellRoll = rnd.Next(1, (allSpells.Count));
-                int spellRoll2 = rnd.Next(1, (allSpells.Count));
-                int spellRoll3 = rnd.Next(1, (allSpells.Count));
+                int spellRoll = rnd.Next(0, (allSpells.Count));
+                int spellRoll2 = rnd.Next(0, (allSpells.Count));
+                int spellRoll3 = rnd.Next(0, (allSpells.Count));
                 string slot1 = allSpells[spellRoll];
                 string slot2 = allSpells[spellRoll2];
                 string slot3 = allSpells[spellRoll3];
@@ -556,6 +555,7 @@ namespace HelloDungeon
             }
             maxSearches = 5;
             InitializePlayer(1, 100, 100, 100, 10, 0, 0, 0, 100, 1, maxSearches, 0, 3, 3);
+            Console.Clear();
             Stage1();
         }
         public void Stage1()
@@ -632,6 +632,7 @@ namespace HelloDungeon
                 Console.Write(">", Console.ForegroundColor);
                 command = Console.ReadLine();
             }
+            Console.Clear();
             Stage2();
         }
         public void Stage2()
@@ -709,6 +710,7 @@ namespace HelloDungeon
                 Console.Write(">", Console.ForegroundColor);
                 command = Console.ReadLine();
             }
+            Console.Clear();
             Stage3();
         }
         public void Stage3()
@@ -786,6 +788,7 @@ namespace HelloDungeon
                 Console.Write(">", Console.ForegroundColor);
                 command = Console.ReadLine();
             }
+            Console.Clear();
         }
     }
 
