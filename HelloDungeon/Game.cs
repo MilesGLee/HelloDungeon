@@ -11,7 +11,7 @@ namespace HelloDungeon
         public int stage;
         public bool inCombat;
         public int maxSearches;
-        public bool beatenSheriff = false;
+        public bool beatenSheriff = false; //if player has beaten boss
         public List<string> allSpells = new List<string>();
         public bool shopType;
         public string shopSlot1;
@@ -276,6 +276,20 @@ namespace HelloDungeon
                     CreateEntity("Zombie", lvl, 20 + (10 * lvl), 10 + (2 * lvl), 3 + (2 * lvl), false);
                 if (stage == 3)
                     CreateEntity("Amalgamation", lvl, 20 + (10 * lvl), 12 + (2 * lvl), 3 + (2 * lvl), false);
+                if (stage == 4)
+                    CreateEntity("Fire Spirit", lvl, 20 + (10 * lvl), 14 + (2 * lvl), 3 + (2 * lvl), false);
+                if (stage == 5)
+                    CreateEntity("Flying Wyvern", lvl, 20 + (10 * lvl), 16 + (2 * lvl), 3 + (2 * lvl), false);
+                if (stage == 6)
+                    CreateEntity("Ice Golem", lvl, 20 + (10 * lvl), 19 + (2 * lvl), 3 + (2 * lvl), false);
+                if (stage == 7)
+                    CreateEntity("Conduit", lvl, 20 + (10 * lvl), 22 + (2 * lvl), 3 + (2 * lvl), false);
+                if (stage == 8)
+                    CreateEntity("Dark Entity", lvl, 20 + (10 * lvl), 24 + (2 * lvl), 3 + (2 * lvl), false);
+                if (stage == 9)
+                    CreateEntity("Vampire", lvl, 20 + (10 * lvl), 26 + (2 * lvl), 3 + (2 * lvl), false);
+                if (stage == 10)
+                    CreateEntity("TZAFFICDV", lvl, 20 + (10 * lvl), 30 + (2 * lvl), 3 + (2 * lvl), false);
             } //Player encounters enemy event
         } //Random event selection
         public void CollectItem()
@@ -472,6 +486,7 @@ namespace HelloDungeon
                     }
                     if (player.hp <= 0)
                     {
+                        Console.Clear();
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.WriteLine($"You have died... You made it a total of {stage} stages. Better luck next time");
                         Console.ForegroundColor = ConsoleColor.Black;
@@ -536,7 +551,7 @@ namespace HelloDungeon
             Console.WriteLine("Please type one of these without the brackets: [Play], [Help], [Quit]");
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write(">", Console.ForegroundColor);
-            command = Console.ReadLine();
+            command = Console.ReadLine(); //Get players input
 
             while (command != "Play")
             {
@@ -553,13 +568,14 @@ namespace HelloDungeon
                 Console.Write(">", Console.ForegroundColor);
                 command = Console.ReadLine();
             }
-            maxSearches = 5;
-            InitializePlayer(1, 100, 100, 100, 10, 0, 0, 0, 100, 1, maxSearches, 0, 3, 3);
+            maxSearches = 5; //set plays searches
+            InitializePlayer(1, 100, 100, 100, 10, 0, 0, 0, 100, 1, maxSearches, 0, 3, 3); // Set players stats
             Console.Clear();
             Stage1();
         }
         public void Stage1()
         {
+            //These next four lines are the setup for each stage
             beatenSheriff = false;
             player.casts = player.maxcasts;
             player.searches = maxSearches;
@@ -576,20 +592,24 @@ namespace HelloDungeon
             command = Console.ReadLine();
             while (beatenSheriff == false)
             {
+                //Casting Spells
                 if (command == $"Cast {allSpells[0]}" && player.casts > 0 && player.Spells.Contains(allSpells[0]))
                     UseSpell(allSpells[0]);
                 if (command == $"Cast {allSpells[1]}" && player.casts > 0 && player.Spells.Contains(allSpells[1]))
                     UseSpell(allSpells[1]);
                 if (command == $"Cast {allSpells[2]}" && player.casts > 0 && player.Spells.Contains(allSpells[2]))
                     UseSpell(allSpells[2]);
+                //Buying items from shop
                 if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
                     BuyItem(1);
                 if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
                     BuyItem(2);
                 if (inCombat == false && command == "Buy 3" && shopSlot3 != null && player.cash >= shopCost)
                     BuyItem(3);
+                //Fight the boss
                 if (inCombat == false && command == "Challenge Sheriff")
                     CreateEntity("Sheriff of Sandthorough", 7, 150, 10, 0, true);
+                //Attack an enemy
                 if (inCombat == true && command == $"Attack")
                 {
                     AttackEntity(currEnemy);
@@ -599,6 +619,7 @@ namespace HelloDungeon
                     CheckStats();
                 if (command == "Help")
                     TextHelp();
+                //Search and collect items
                 if (command == "Search" && inCombat == true)
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGray;
@@ -623,6 +644,7 @@ namespace HelloDungeon
                 }
                 if (command == "Collect" && nearbyItem != 0 && inCombat == false)
                     CollectItem();
+                //make sure enemies attack player at the end of a round
                 if (inCombat == true && damageCheck == false)
                 {
                     AttackPlayer();
@@ -746,6 +768,552 @@ namespace HelloDungeon
                     BuyItem(3);
                 if (inCombat == false && command == "Challenge Sheriff")
                     CreateEntity("Psychiff", 15, 400, 40, 15, true);
+                if (inCombat == true && command == $"Attack")
+                {
+                    AttackEntity(currEnemy);
+                    damageCheck = false;
+                }
+                if (command == "Check stats")
+                    CheckStats();
+                if (command == "Help")
+                    TextHelp();
+                if (command == "Search" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Search" && player.searches <= 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("You cannot search anymore");
+                }
+                if (command == "Search" && player.searches > 0 && inCombat == false)
+                    SearchGame();
+                if (command == "Collect" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Collect" && nearbyItem == 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("No items to collect");
+                }
+                if (command == "Collect" && nearbyItem != 0 && inCombat == false)
+                    CollectItem();
+                if (inCombat == true && damageCheck == false)
+                {
+                    AttackPlayer();
+                    damageCheck = true;
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(">", Console.ForegroundColor);
+                command = Console.ReadLine();
+            }
+            Console.Clear();
+            Stage4();
+        }
+        public void Stage4()
+        {
+            beatenSheriff = false;
+            player.searches = maxSearches;
+            player.casts = player.maxcasts;
+            stage = 3;
+            bool damageCheck = false;
+            Console.Title = "Hocus Pocus Cowboys: Scorched Villa";
+            string command;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.Write("You mozey on into what literally looks like a town in the middle of a forest fire... What do you do...");
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("");
+            Console.Write(">", Console.ForegroundColor);
+            command = Console.ReadLine();
+            while (beatenSheriff == false)
+            {
+                if (command == $"Cast {allSpells[0]}" && player.casts > 0 && player.Spells.Contains(allSpells[0]))
+                    UseSpell(allSpells[0]);
+                if (command == $"Cast {allSpells[1]}" && player.casts > 0 && player.Spells.Contains(allSpells[1]))
+                    UseSpell(allSpells[1]);
+                if (command == $"Cast {allSpells[2]}" && player.casts > 0 && player.Spells.Contains(allSpells[2]))
+                    UseSpell(allSpells[2]);
+                if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
+                    BuyItem(1);
+                if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
+                    BuyItem(2);
+                if (inCombat == false && command == "Buy 3" && shopSlot3 != null && player.cash >= shopCost)
+                    BuyItem(3);
+                if (inCombat == false && command == "Challenge Sheriff")
+                    CreateEntity("Brand", 20, 400, 60, 25, true);
+                if (inCombat == true && command == $"Attack")
+                {
+                    AttackEntity(currEnemy);
+                    damageCheck = false;
+                }
+                if (command == "Check stats")
+                    CheckStats();
+                if (command == "Help")
+                    TextHelp();
+                if (command == "Search" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Search" && player.searches <= 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("You cannot search anymore");
+                }
+                if (command == "Search" && player.searches > 0 && inCombat == false)
+                    SearchGame();
+                if (command == "Collect" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Collect" && nearbyItem == 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("No items to collect");
+                }
+                if (command == "Collect" && nearbyItem != 0 && inCombat == false)
+                    CollectItem();
+                if (inCombat == true && damageCheck == false)
+                {
+                    AttackPlayer();
+                    damageCheck = true;
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(">", Console.ForegroundColor);
+                command = Console.ReadLine();
+            }
+            Console.Clear();
+            Stage5();
+        }
+        public void Stage5()
+        {
+            beatenSheriff = false;
+            player.searches = maxSearches;
+            player.casts = player.maxcasts;
+            stage = 3;
+            bool damageCheck = false;
+            Console.Title = "Hocus Pocus Cowboys: Bulwarks Islands";
+            string command;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Gray;
+            Console.Write("You climb your way into the floating islands... What do you do...");
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("");
+            Console.Write(">", Console.ForegroundColor);
+            command = Console.ReadLine();
+            while (beatenSheriff == false)
+            {
+                if (command == $"Cast {allSpells[0]}" && player.casts > 0 && player.Spells.Contains(allSpells[0]))
+                    UseSpell(allSpells[0]);
+                if (command == $"Cast {allSpells[1]}" && player.casts > 0 && player.Spells.Contains(allSpells[1]))
+                    UseSpell(allSpells[1]);
+                if (command == $"Cast {allSpells[2]}" && player.casts > 0 && player.Spells.Contains(allSpells[2]))
+                    UseSpell(allSpells[2]);
+                if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
+                    BuyItem(1);
+                if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
+                    BuyItem(2);
+                if (inCombat == false && command == "Buy 3" && shopSlot3 != null && player.cash >= shopCost)
+                    BuyItem(3);
+                if (inCombat == false && command == "Challenge Sheriff")
+                    CreateEntity("Solus", 35, 800, 30, 50, true);
+                if (inCombat == true && command == $"Attack")
+                {
+                    AttackEntity(currEnemy);
+                    damageCheck = false;
+                }
+                if (command == "Check stats")
+                    CheckStats();
+                if (command == "Help")
+                    TextHelp();
+                if (command == "Search" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Search" && player.searches <= 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("You cannot search anymore");
+                }
+                if (command == "Search" && player.searches > 0 && inCombat == false)
+                    SearchGame();
+                if (command == "Collect" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Collect" && nearbyItem == 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("No items to collect");
+                }
+                if (command == "Collect" && nearbyItem != 0 && inCombat == false)
+                    CollectItem();
+                if (inCombat == true && damageCheck == false)
+                {
+                    AttackPlayer();
+                    damageCheck = true;
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(">", Console.ForegroundColor);
+                command = Console.ReadLine();
+            }
+            Console.Clear();
+            Stage6();
+        }
+        public void Stage6()
+        {
+            beatenSheriff = false;
+            player.searches = maxSearches;
+            player.casts = player.maxcasts;
+            stage = 3;
+            bool damageCheck = false;
+            Console.Title = "Hocus Pocus Cowboys: Arcikhun";
+            string command;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.BackgroundColor = ConsoleColor.Cyan;
+            Console.Write("You enter a town that looks like its still stuck in the ice age... What do you do...");
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("");
+            Console.Write(">", Console.ForegroundColor);
+            command = Console.ReadLine();
+            while (beatenSheriff == false)
+            {
+                if (command == $"Cast {allSpells[0]}" && player.casts > 0 && player.Spells.Contains(allSpells[0]))
+                    UseSpell(allSpells[0]);
+                if (command == $"Cast {allSpells[1]}" && player.casts > 0 && player.Spells.Contains(allSpells[1]))
+                    UseSpell(allSpells[1]);
+                if (command == $"Cast {allSpells[2]}" && player.casts > 0 && player.Spells.Contains(allSpells[2]))
+                    UseSpell(allSpells[2]);
+                if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
+                    BuyItem(1);
+                if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
+                    BuyItem(2);
+                if (inCombat == false && command == "Buy 3" && shopSlot3 != null && player.cash >= shopCost)
+                    BuyItem(3);
+                if (inCombat == false && command == "Challenge Sheriff")
+                    CreateEntity("Frozary", 50, 300, 75, 0, true);
+                if (inCombat == true && command == $"Attack")
+                {
+                    AttackEntity(currEnemy);
+                    damageCheck = false;
+                }
+                if (command == "Check stats")
+                    CheckStats();
+                if (command == "Help")
+                    TextHelp();
+                if (command == "Search" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Search" && player.searches <= 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("You cannot search anymore");
+                }
+                if (command == "Search" && player.searches > 0 && inCombat == false)
+                    SearchGame();
+                if (command == "Collect" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Collect" && nearbyItem == 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("No items to collect");
+                }
+                if (command == "Collect" && nearbyItem != 0 && inCombat == false)
+                    CollectItem();
+                if (inCombat == true && damageCheck == false)
+                {
+                    AttackPlayer();
+                    damageCheck = true;
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(">", Console.ForegroundColor);
+                command = Console.ReadLine();
+            }
+            Console.Clear();
+            Stage7();
+        }
+        public void Stage7()
+        {
+            beatenSheriff = false;
+            player.searches = maxSearches;
+            player.casts = player.maxcasts;
+            stage = 3;
+            bool damageCheck = false;
+            Console.Title = "Hocus Pocus Cowboys: Galvanille";
+            string command;
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.Write("This town looks like its from a different century almost steam punk like... What do you do...");
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("");
+            Console.Write(">", Console.ForegroundColor);
+            command = Console.ReadLine();
+            while (beatenSheriff == false)
+            {
+                if (command == $"Cast {allSpells[0]}" && player.casts > 0 && player.Spells.Contains(allSpells[0]))
+                    UseSpell(allSpells[0]);
+                if (command == $"Cast {allSpells[1]}" && player.casts > 0 && player.Spells.Contains(allSpells[1]))
+                    UseSpell(allSpells[1]);
+                if (command == $"Cast {allSpells[2]}" && player.casts > 0 && player.Spells.Contains(allSpells[2]))
+                    UseSpell(allSpells[2]);
+                if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
+                    BuyItem(1);
+                if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
+                    BuyItem(2);
+                if (inCombat == false && command == "Buy 3" && shopSlot3 != null && player.cash >= shopCost)
+                    BuyItem(3);
+                if (inCombat == false && command == "Challenge Sheriff")
+                    CreateEntity("Transmutale", 60, 1000, 40, 10, true);
+                if (inCombat == true && command == $"Attack")
+                {
+                    AttackEntity(currEnemy);
+                    damageCheck = false;
+                }
+                if (command == "Check stats")
+                    CheckStats();
+                if (command == "Help")
+                    TextHelp();
+                if (command == "Search" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Search" && player.searches <= 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("You cannot search anymore");
+                }
+                if (command == "Search" && player.searches > 0 && inCombat == false)
+                    SearchGame();
+                if (command == "Collect" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Collect" && nearbyItem == 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("No items to collect");
+                }
+                if (command == "Collect" && nearbyItem != 0 && inCombat == false)
+                    CollectItem();
+                if (inCombat == true && damageCheck == false)
+                {
+                    AttackPlayer();
+                    damageCheck = true;
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(">", Console.ForegroundColor);
+                command = Console.ReadLine();
+            }
+            Console.Clear();
+            Stage8();
+        }
+        public void Stage8()
+        {
+            beatenSheriff = false;
+            player.searches = maxSearches;
+            player.casts = player.maxcasts;
+            stage = 3;
+            bool damageCheck = false;
+            Console.Title = "Hocus Pocus Cowboys: Duskelh";
+            string command;
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.Write("You somehow find yourself in pitch blackness with not a light in sight... What do you do...");
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("");
+            Console.Write(">", Console.ForegroundColor);
+            command = Console.ReadLine();
+            while (beatenSheriff == false)
+            {
+                if (command == $"Cast {allSpells[0]}" && player.casts > 0 && player.Spells.Contains(allSpells[0]))
+                    UseSpell(allSpells[0]);
+                if (command == $"Cast {allSpells[1]}" && player.casts > 0 && player.Spells.Contains(allSpells[1]))
+                    UseSpell(allSpells[1]);
+                if (command == $"Cast {allSpells[2]}" && player.casts > 0 && player.Spells.Contains(allSpells[2]))
+                    UseSpell(allSpells[2]);
+                if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
+                    BuyItem(1);
+                if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
+                    BuyItem(2);
+                if (inCombat == false && command == "Buy 3" && shopSlot3 != null && player.cash >= shopCost)
+                    BuyItem(3);
+                if (inCombat == false && command == "Challenge Sheriff")
+                    CreateEntity("Sunchen", 70, 800, 60, 50, true);
+                if (inCombat == true && command == $"Attack")
+                {
+                    AttackEntity(currEnemy);
+                    damageCheck = false;
+                }
+                if (command == "Check stats")
+                    CheckStats();
+                if (command == "Help")
+                    TextHelp();
+                if (command == "Search" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Search" && player.searches <= 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("You cannot search anymore");
+                }
+                if (command == "Search" && player.searches > 0 && inCombat == false)
+                    SearchGame();
+                if (command == "Collect" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Collect" && nearbyItem == 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("No items to collect");
+                }
+                if (command == "Collect" && nearbyItem != 0 && inCombat == false)
+                    CollectItem();
+                if (inCombat == true && damageCheck == false)
+                {
+                    AttackPlayer();
+                    damageCheck = true;
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(">", Console.ForegroundColor);
+                command = Console.ReadLine();
+            }
+            Console.Clear();
+            Stage9();
+        }
+        public void Stage9()
+        {
+            beatenSheriff = false;
+            player.searches = maxSearches;
+            player.casts = player.maxcasts;
+            stage = 3;
+            bool damageCheck = false;
+            Console.Title = "Hocus Pocus Cowboys: Wynslye";
+            string command;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.DarkRed;
+            Console.Write("You enter the crimson town and worry for your own blood... What do you do...");
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("");
+            Console.Write(">", Console.ForegroundColor);
+            command = Console.ReadLine();
+            while (beatenSheriff == false)
+            {
+                if (command == $"Cast {allSpells[0]}" && player.casts > 0 && player.Spells.Contains(allSpells[0]))
+                    UseSpell(allSpells[0]);
+                if (command == $"Cast {allSpells[1]}" && player.casts > 0 && player.Spells.Contains(allSpells[1]))
+                    UseSpell(allSpells[1]);
+                if (command == $"Cast {allSpells[2]}" && player.casts > 0 && player.Spells.Contains(allSpells[2]))
+                    UseSpell(allSpells[2]);
+                if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
+                    BuyItem(1);
+                if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
+                    BuyItem(2);
+                if (inCombat == false && command == "Buy 3" && shopSlot3 != null && player.cash >= shopCost)
+                    BuyItem(3);
+                if (inCombat == false && command == "Challenge Sheriff")
+                    CreateEntity("Von'N'Dhul", 85, 950, 70, 0, true);
+                if (inCombat == true && command == $"Attack")
+                {
+                    AttackEntity(currEnemy);
+                    damageCheck = false;
+                }
+                if (command == "Check stats")
+                    CheckStats();
+                if (command == "Help")
+                    TextHelp();
+                if (command == "Search" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Search" && player.searches <= 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("You cannot search anymore");
+                }
+                if (command == "Search" && player.searches > 0 && inCombat == false)
+                    SearchGame();
+                if (command == "Collect" && inCombat == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("Cannot perform this action while in combat!");
+                }
+                if (command == "Collect" && nearbyItem == 0 && inCombat == false)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("No items to collect");
+                }
+                if (command == "Collect" && nearbyItem != 0 && inCombat == false)
+                    CollectItem();
+                if (inCombat == true && damageCheck == false)
+                {
+                    AttackPlayer();
+                    damageCheck = true;
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(">", Console.ForegroundColor);
+                command = Console.ReadLine();
+            }
+            Console.Clear();
+            Stage10();
+        }
+        public void Stage10()
+        {
+            beatenSheriff = false;
+            player.searches = maxSearches;
+            player.casts = player.maxcasts;
+            stage = 3;
+            bool damageCheck = false;
+            Console.Title = "Hocus Pocus Cowboys: End of the Line";
+            string command;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.Write("This is it... The final town... It looks a little like every place you've been... What do you do...");
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("");
+            Console.Write(">", Console.ForegroundColor);
+            command = Console.ReadLine();
+            while (beatenSheriff == false)
+            {
+                if (command == $"Cast {allSpells[0]}" && player.casts > 0 && player.Spells.Contains(allSpells[0]))
+                    UseSpell(allSpells[0]);
+                if (command == $"Cast {allSpells[1]}" && player.casts > 0 && player.Spells.Contains(allSpells[1]))
+                    UseSpell(allSpells[1]);
+                if (command == $"Cast {allSpells[2]}" && player.casts > 0 && player.Spells.Contains(allSpells[2]))
+                    UseSpell(allSpells[2]);
+                if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
+                    BuyItem(1);
+                if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
+                    BuyItem(2);
+                if (inCombat == false && command == "Buy 3" && shopSlot3 != null && player.cash >= shopCost)
+                    BuyItem(3);
+                if (inCombat == false && command == "Challenge Sheriff")
+                    CreateEntity("Hocus Pocus Himself", 100, 1000, 100, 100, true);
                 if (inCombat == true && command == $"Attack")
                 {
                     AttackEntity(currEnemy);
