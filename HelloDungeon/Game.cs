@@ -24,14 +24,12 @@ namespace HelloDungeon
         public bool monolith = false; // for looping
         public bool finalStage = false; //if player is on final stage, used for looping and making sure monolith appears only on final stage.
         public int stageType; //For spawning enemies in the right stage.
-
         public void Run()
         {
             ListSpells();
             Console.Title = "Hocus Pocus Cowboys: A text-based roguelite";
             MainMenu();
         }
-
         //Player Variables
         public class Player
         {
@@ -52,7 +50,6 @@ namespace HelloDungeon
             public List<string> Items = new List<string>(); //Item List
             public List<string> Spells = new List<string>(); //Spell list
         } //Da player class, what else you expect?
-
         public Player player = new Player();
         public void InitializePlayer(int LVL, int CASH, int HP, int MAXHP, int ATK, int ARM, int WARD, int EXP, int MAXEXP, int CRIT, int SEARCHES, int LUCK, int CASTS, int MAXCASTS)
         {
@@ -675,7 +672,6 @@ namespace HelloDungeon
                 Console.WriteLine("Summon Mead has been successfully casted, you got a nice swig from your mead, you healed for 50 health");
             }
         } //For casting spells
-
         //Scene Voids
         public void MainMenu()
         {
@@ -1532,5 +1528,4 @@ namespace HelloDungeon
             Console.Clear();
         }
     }
-
 }
