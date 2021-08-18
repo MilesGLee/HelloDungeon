@@ -20,6 +20,9 @@ namespace HelloDungeon
         public int shopCost;
         public bool distracting;
         public bool houdini;
+        public bool looping;
+        public bool monolith = false;
+        public bool finalStage = false;
 
         public void Run()
         {
@@ -101,7 +104,7 @@ namespace HelloDungeon
         {
             Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.WriteLine("As stated this is a text based roguelite! To play this game you will have to input simple yet precise phrases into the command prompt to perform actions.");
-            Console.WriteLine("These actions include (Remember it is case sensitive): 'Search', 'Check stats', 'Challenge Sheriff', 'Attack', 'Collect', 'Buy #'");
+            Console.WriteLine("These actions include (Remember it is case sensitive): 'Search', 'Check stats', 'Challenge Sheriff', 'Attack', 'Collect', 'Buy [#]', 'Cast [Spell Name]'");
             Console.WriteLine("The story is as follows: This universe takes place in a fantasy western, where cowboy vigilate use what they call 'Hocus Pocus'(Magic). You, as a new sheriff in town, must make your way through 10 towns. Each town contains a Sheriff boss you must defeat in order to move onto the next stage. You are able to search each area a limited amount of times for a variety of events to happen. If your health depletes to 0, you die and the run is over.");
         } //List of commands and general help
         public void CheckStats()
@@ -134,9 +137,16 @@ namespace HelloDungeon
         {
             nearbyItem = 0;
             player.searches -= 1;
+            if (player.searches == 0 && finalStage == true) 
+            {
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine("You have found a mysterious monolith, do you actiavte it? 1:yes, 2:no");
+                monolith = true;
+            } //Summon Looping monolith
             Random rnd = new Random();
             int roll = rnd.Next(1, 200); // creates a number between 1 and 200
             int roll2 = rnd.Next(1, 3); // creates a number between 1 and 2
+            int roll3 = rnd.Next(1, 101); // creates a number between 1 and 2
             if (roll > (100 - player.ward) && roll2 == 1) 
             {
                 int itemRoll = rnd.Next(1, 9);
@@ -247,7 +257,7 @@ namespace HelloDungeon
                     nearbyItem = itemRoll;
                 }
             } //Player found an item event
-            if (roll > (100 - player.ward) && roll2 == 2)
+            if (roll > (100 - player.ward) && roll2 == 2 && roll3 > 50)
             {
                 Console.ForegroundColor = ConsoleColor.DarkCyan;
                 Console.WriteLine("You turn a courner and encounter a spellsmith, offering you goods...");
@@ -267,6 +277,116 @@ namespace HelloDungeon
                 shopSlot2 = slot2;
                 shopSlot3 = slot3;
             } //Player encounters a spellsmith
+            if (roll > (100 - player.ward) && roll2 == 2 && roll3 < 50)
+            {
+                int itemRoll = rnd.Next(1, 9);
+                if (itemRoll == 1)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("You have searched and found an item! It looks to be a Focus Lens.");
+                    nearbyItem = itemRoll;
+                }
+                if (itemRoll == 2)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("You have searched and found an item! It looks to be a Lead Lined Stetson.");
+                    nearbyItem = itemRoll;
+                }
+                if (itemRoll == 3)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("You have searched and found an item! It looks to be a infused flask");
+                    nearbyItem = itemRoll;
+                }
+                if (itemRoll == 4)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("You have searched and found an item! It looks to be an Extra boot spur.");
+                    nearbyItem = itemRoll;
+                }
+                if (itemRoll == 5)
+                {
+                    int chance = rnd.Next(1, 101);
+                    if (chance > 20 && player.luck > 0)
+                    {
+                        int rerolls = player.luck;
+                        while (rerolls != 0 && chance > 20)
+                        {
+                            chance = rnd.Next(1, 101);
+                            rerolls--;
+                        }
+                    }
+                    if (chance < 20)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write("You have searched and found an item! ");
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        Console.WriteLine("Oh whats this!? It appears to be a hidden map!");
+                        nearbyItem = itemRoll;
+                    }
+                    else
+                    {
+                        int randItem = rnd.Next(1, 5);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        if (randItem == 1)
+                            Console.WriteLine("You have searched and found an item! It looks to be a Focus Lens.");
+                        if (randItem == 2)
+                            Console.WriteLine("You have searched and found an item! It looks to be a Lead Lined Stetson.");
+                        if (randItem == 3)
+                            Console.WriteLine("You have searched and found an item! It looks to be a Infused Flask.");
+                        if (randItem == 4)
+                            Console.WriteLine("You have searched and found an item! It looks to be an Extra boot spur.");
+                        nearbyItem = randItem;
+                    }
+                }
+                if (itemRoll == 6)
+                {
+                    int chance = rnd.Next(1, 101);
+                    if (chance > 20 && player.luck > 0)
+                    {
+                        int rerolls = player.luck;
+                        while (rerolls != 0 && chance > 20)
+                        {
+                            chance = rnd.Next(1, 101);
+                            rerolls--;
+                        }
+                    }
+                    if (chance < 20)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write("You have searched and found an item! ");
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        Console.WriteLine("Oh woulda lookit here! You found a lucky coin!");
+                        nearbyItem = itemRoll;
+                    }
+                    else
+                    {
+                        int randItem = rnd.Next(1, 5);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        if (randItem == 1)
+                            Console.WriteLine("You have searched and found an item! It looks to be a Focus Lens.");
+                        if (randItem == 2)
+                            Console.WriteLine("You have searched and found an item! It looks to be a Lead Lined Stetson.");
+                        if (randItem == 3)
+                            Console.WriteLine("You have searched and found an item! It looks to be a Infused Flask.");
+                        if (randItem == 4)
+                            Console.WriteLine("You have searched and found an item! It looks to be an Extra boot spur.");
+                        nearbyItem = randItem;
+                    }
+                }
+                if (itemRoll == 7)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("You have searched and found an item! It looks to be a Warding Stone.");
+                    nearbyItem = itemRoll;
+                }
+                if (itemRoll == 8)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("You have searched and found an item! It looks to be a Tome Page.");
+                    nearbyItem = itemRoll;
+                }
+            } //Player found an item event cleanup
             if (roll < (100 - player.ward)) 
             {
                 int lvl = rnd.Next(stage, (stage * 3));
@@ -459,6 +579,26 @@ namespace HelloDungeon
                     Console.WriteLine($"You've leveled up! You can feel yourself growing stronger... Level {player.lvl} acquired!");
                 }
                 beatenSheriff = true;
+                if (monolith == true && finalStage == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine("[Hocus Pocus Himself]: You may have your strength now, but you wont outlast me yet! With my monolith active I can reset this universe! Be gone!");
+                    Console.ReadKey();
+                    Console.Clear();
+                    finalStage = false;
+                    monolith = false;
+                    Stage1();
+                }
+                else if(finalStage == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine("[Hocus Pocus Himself]: AAAAHHHGGG! NOOOO! ALL IVE WORKED FORRRRR!!!!");
+                    Console.WriteLine($"You win! You cleared a total of {stage} towns! Thank you for playing!");
+                    Console.ReadKey();
+                    Console.Clear();
+                    finalStage = false;
+                    MainMenu();
+                }
             }
             houdini = false;
         } //When player attacks and entity
@@ -490,7 +630,9 @@ namespace HelloDungeon
                         Console.ForegroundColor = ConsoleColor.DarkRed;
                         Console.WriteLine($"You have died... You made it a total of {stage} stages. Better luck next time");
                         Console.ForegroundColor = ConsoleColor.Black;
-                        Environment.Exit(0);
+                        Console.ReadKey();
+                        Console.Clear();
+                        MainMenu();
                     }
                 }
                 else
@@ -536,6 +678,12 @@ namespace HelloDungeon
         //Scene Voids
         public void MainMenu()
         {
+            nearbyItem = 0;
+            stage = 0;
+            inCombat = false;
+            beatenSheriff = false;
+            distracting = false;
+            houdini = false;
             string command;
             Console.ForegroundColor = ConsoleColor.Gray;
             Console.Write("Welcome to ");
@@ -579,7 +727,7 @@ namespace HelloDungeon
             beatenSheriff = false;
             player.casts = player.maxcasts;
             player.searches = maxSearches;
-            stage = 1;
+            stage += 1;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Sandthorough";
             string command;
@@ -662,7 +810,7 @@ namespace HelloDungeon
             beatenSheriff = false;
             player.searches = maxSearches;
             player.casts = player.maxcasts;
-            stage = 2;
+            stage += 1;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Rottenburgh";
             string command;
@@ -740,7 +888,7 @@ namespace HelloDungeon
             beatenSheriff = false;
             player.searches = maxSearches;
             player.casts = player.maxcasts;
-            stage = 3;
+            stage += 1;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Fractalie";
             string command;
@@ -818,7 +966,7 @@ namespace HelloDungeon
             beatenSheriff = false;
             player.searches = maxSearches;
             player.casts = player.maxcasts;
-            stage = 3;
+            stage += 1;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Scorched Villa";
             string command;
@@ -896,11 +1044,11 @@ namespace HelloDungeon
             beatenSheriff = false;
             player.searches = maxSearches;
             player.casts = player.maxcasts;
-            stage = 3;
+            stage += 1;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Bulwarks Islands";
             string command;
-            Console.ForegroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.DarkGray;
             Console.BackgroundColor = ConsoleColor.Gray;
             Console.Write("You climb your way into the floating islands... What do you do...");
             Console.BackgroundColor = ConsoleColor.Black;
@@ -974,7 +1122,7 @@ namespace HelloDungeon
             beatenSheriff = false;
             player.searches = maxSearches;
             player.casts = player.maxcasts;
-            stage = 3;
+            stage += 1;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Arcikhun";
             string command;
@@ -1052,7 +1200,7 @@ namespace HelloDungeon
             beatenSheriff = false;
             player.searches = maxSearches;
             player.casts = player.maxcasts;
-            stage = 3;
+            stage += 1;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Galvanille";
             string command;
@@ -1130,7 +1278,7 @@ namespace HelloDungeon
             beatenSheriff = false;
             player.searches = maxSearches;
             player.casts = player.maxcasts;
-            stage = 3;
+            stage += 1;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Duskelh";
             string command;
@@ -1208,7 +1356,7 @@ namespace HelloDungeon
             beatenSheriff = false;
             player.searches = maxSearches;
             player.casts = player.maxcasts;
-            stage = 3;
+            stage += 1;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Wynslye";
             string command;
@@ -1283,10 +1431,11 @@ namespace HelloDungeon
         }
         public void Stage10()
         {
+            finalStage = true;
             beatenSheriff = false;
             player.searches = maxSearches;
             player.casts = player.maxcasts;
-            stage = 3;
+            stage += 1;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: End of the Line";
             string command;
@@ -1300,6 +1449,18 @@ namespace HelloDungeon
             command = Console.ReadLine();
             while (beatenSheriff == false)
             {
+                if (command == "1" && monolith == true) 
+                {
+                    looping = true;
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Console.WriteLine("You have activated the strange monolith...");
+                }
+                if (command == "2" && monolith == true)
+                {
+                    looping = false;
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+                    Console.WriteLine("You decide to leave it be...");
+                }
                 if (command == $"Cast {allSpells[0]}" && player.casts > 0 && player.Spells.Contains(allSpells[0]))
                     UseSpell(allSpells[0]);
                 if (command == $"Cast {allSpells[1]}" && player.casts > 0 && player.Spells.Contains(allSpells[1]))
@@ -1356,6 +1517,7 @@ namespace HelloDungeon
                 Console.Write(">", Console.ForegroundColor);
                 command = Console.ReadLine();
             }
+            finalStage = false;
             Console.Clear();
         }
     }
