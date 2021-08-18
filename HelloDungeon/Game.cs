@@ -21,9 +21,9 @@ namespace HelloDungeon
         public bool distracting;
         public bool houdini;
         public bool looping;
-        public bool monolith = false;
-        public bool finalStage = false;
-        public int stageType;
+        public bool monolith = false; // for looping
+        public bool finalStage = false; //if player is on final stage, used for looping and making sure monolith appears only on final stage.
+        public int stageType; //For spawning enemies in the right stage.
 
         public void Run()
         {
@@ -729,7 +729,7 @@ namespace HelloDungeon
             player.casts = player.maxcasts;
             player.searches = maxSearches;
             stage += 1;
-            stageType == 1;
+            stageType = 1;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Sandthorough";
             string command;
@@ -813,7 +813,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
-            stageType == 2;
+            stageType = 2;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Rottenburgh";
             string command;
@@ -892,7 +892,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
-            stageType == 3;
+            stageType = 3;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Fractalie";
             string command;
@@ -971,7 +971,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
-            stageType == 4;
+            stageType = 4;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Scorched Villa";
             string command;
@@ -1050,7 +1050,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
-            stageType == 5;
+            stageType = 5;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Bulwarks Islands";
             string command;
@@ -1129,7 +1129,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
-            stageType == 6;
+            stageType = 6;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Arcikhun";
             string command;
@@ -1208,7 +1208,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
-            stageType == 7;
+            stageType = 7;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Galvanille";
             string command;
@@ -1287,7 +1287,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
-            stageType == 8;
+            stageType = 8;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Duskelh";
             string command;
@@ -1366,7 +1366,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
-            stageType == 9;
+            stageType = 9;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Wynslye";
             string command;
@@ -1446,7 +1446,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
-            stageType == 10;
+            stageType = 10;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: End of the Line";
             string command;
