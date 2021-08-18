@@ -140,7 +140,7 @@ namespace HelloDungeon
             int roll2 = rnd.Next(1, 3); // creates a number between 1 and 2
             if (roll > (100 - player.ward) && roll2 == 1) 
             {
-                int itemRoll = rnd.Next(1, 8);
+                int itemRoll = rnd.Next(1, 9);
                 if (itemRoll == 1)
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
@@ -241,6 +241,12 @@ namespace HelloDungeon
                     Console.WriteLine("You have searched and found an item! It looks to be a Warding Stone.");
                     nearbyItem = itemRoll;
                 }
+                if (itemRoll == 8)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("You have searched and found an item! It looks to be a Tome Page.");
+                    nearbyItem = itemRoll;
+                }
             } //Player found an item event
             if (roll > (100 - player.ward) && roll2 == 2)
             {
@@ -330,6 +336,14 @@ namespace HelloDungeon
                 player.ward += 10;
                 nearbyItem = 0;
             } //Warding Stone
+            if (nearbyItem == 8)
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("You collected a Tome Page!");
+                player.Items.Add("Tome Page");
+                player.maxcasts += 1;
+                nearbyItem = 0;
+            } //Tome Page
         } //Collecting found items
         public void BuyItem(int slot) 
         {
@@ -503,7 +517,7 @@ namespace HelloDungeon
                 Console.ForegroundColor = ConsoleColor.DarkGray;
                 Console.WriteLine("Summon Mead has been successfully casted, you got a nice swig from your mead, you healed for 50 health");
             }
-        }
+        } //For casting spells
 
         //Scene Voids
         public void MainMenu()
@@ -562,11 +576,11 @@ namespace HelloDungeon
             command = Console.ReadLine();
             while (beatenSheriff == false)
             {
-                if (command == $"Cast {allSpells[0]}" && player.casts > 0)
+                if (command == $"Cast {allSpells[0]}" && player.casts > 0 && player.Spells.Contains(allSpells[0]))
                     UseSpell(allSpells[0]);
-                if (command == $"Cast {allSpells[1]}" && player.casts > 0)
+                if (command == $"Cast {allSpells[1]}" && player.casts > 0 && player.Spells.Contains(allSpells[1]))
                     UseSpell(allSpells[1]);
-                if (command == $"Cast {allSpells[2]}" && player.casts > 0)
+                if (command == $"Cast {allSpells[2]}" && player.casts > 0 && player.Spells.Contains(allSpells[2]))
                     UseSpell(allSpells[2]);
                 if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
                     BuyItem(1);
@@ -624,6 +638,7 @@ namespace HelloDungeon
         {
             beatenSheriff = false;
             player.searches = maxSearches;
+            player.casts = player.maxcasts;
             stage = 2;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Rottenburgh";
@@ -638,6 +653,12 @@ namespace HelloDungeon
             command = Console.ReadLine();
             while (beatenSheriff == false)
             {
+                if (command == $"Cast {allSpells[0]}" && player.casts > 0 && player.Spells.Contains(allSpells[0]))
+                    UseSpell(allSpells[0]);
+                if (command == $"Cast {allSpells[1]}" && player.casts > 0 && player.Spells.Contains(allSpells[1]))
+                    UseSpell(allSpells[1]);
+                if (command == $"Cast {allSpells[2]}" && player.casts > 0 && player.Spells.Contains(allSpells[2]))
+                    UseSpell(allSpells[2]);
                 if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
                     BuyItem(1);
                 if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
@@ -694,6 +715,7 @@ namespace HelloDungeon
         {
             beatenSheriff = false;
             player.searches = maxSearches;
+            player.casts = player.maxcasts;
             stage = 3;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Fractalie";
@@ -708,6 +730,12 @@ namespace HelloDungeon
             command = Console.ReadLine();
             while (beatenSheriff == false)
             {
+                if (command == $"Cast {allSpells[0]}" && player.casts > 0 && player.Spells.Contains(allSpells[0]))
+                    UseSpell(allSpells[0]);
+                if (command == $"Cast {allSpells[1]}" && player.casts > 0 && player.Spells.Contains(allSpells[1]))
+                    UseSpell(allSpells[1]);
+                if (command == $"Cast {allSpells[2]}" && player.casts > 0 && player.Spells.Contains(allSpells[2]))
+                    UseSpell(allSpells[2]);
                 if (inCombat == false && command == "Buy 1" && shopSlot1 != null && player.cash >= shopCost)
                     BuyItem(1);
                 if (inCombat == false && command == "Buy 2" && shopSlot2 != null && player.cash >= shopCost)
