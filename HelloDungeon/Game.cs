@@ -577,7 +577,7 @@ namespace HelloDungeon
             while (beatenSheriff == false)
             {
                 if (inCombat == false && command == "Challenge Sheriff")
-                    CreateEntity("Psychiff", 10, 400, 40, 15, true);
+                    CreateEntity("Psychiff", 15, 400, 40, 15, true);
                 if (inCombat == true && command == $"Attack")
                 {
                     AttackEntity(currEnemy);
