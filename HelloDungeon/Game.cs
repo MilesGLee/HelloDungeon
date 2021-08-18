@@ -23,6 +23,7 @@ namespace HelloDungeon
         public bool looping;
         public bool monolith = false;
         public bool finalStage = false;
+        public int stageType;
 
         public void Run()
         {
@@ -390,25 +391,25 @@ namespace HelloDungeon
             if (roll < (100 - player.ward)) 
             {
                 int lvl = rnd.Next(stage, (stage * 3));
-                if (stage == 1)
+                if (stageType == 1)
                     CreateEntity("Theif", lvl, 20 + (10 * lvl), 7 + (2 * lvl), 3 + (2 * lvl), false);
-                if (stage == 2)
+                if (stageType == 2)
                     CreateEntity("Zombie", lvl, 20 + (10 * lvl), 10 + (2 * lvl), 3 + (2 * lvl), false);
-                if (stage == 3)
+                if (stageType == 3)
                     CreateEntity("Amalgamation", lvl, 20 + (10 * lvl), 12 + (2 * lvl), 3 + (2 * lvl), false);
-                if (stage == 4)
+                if (stageType == 4)
                     CreateEntity("Fire Spirit", lvl, 20 + (10 * lvl), 14 + (2 * lvl), 3 + (2 * lvl), false);
-                if (stage == 5)
+                if (stageType == 5)
                     CreateEntity("Flying Wyvern", lvl, 20 + (10 * lvl), 16 + (2 * lvl), 3 + (2 * lvl), false);
-                if (stage == 6)
+                if (stageType == 6)
                     CreateEntity("Ice Golem", lvl, 20 + (10 * lvl), 19 + (2 * lvl), 3 + (2 * lvl), false);
-                if (stage == 7)
+                if (stageType == 7)
                     CreateEntity("Conduit", lvl, 20 + (10 * lvl), 22 + (2 * lvl), 3 + (2 * lvl), false);
-                if (stage == 8)
+                if (stageType == 8)
                     CreateEntity("Dark Entity", lvl, 20 + (10 * lvl), 24 + (2 * lvl), 3 + (2 * lvl), false);
-                if (stage == 9)
+                if (stageType == 9)
                     CreateEntity("Vampire", lvl, 20 + (10 * lvl), 26 + (2 * lvl), 3 + (2 * lvl), false);
-                if (stage == 10)
+                if (stageType == 10)
                     CreateEntity("TZAFFICDV", lvl, 20 + (10 * lvl), 30 + (2 * lvl), 3 + (2 * lvl), false);
             } //Player encounters enemy event
         } //Random event selection
@@ -728,6 +729,7 @@ namespace HelloDungeon
             player.casts = player.maxcasts;
             player.searches = maxSearches;
             stage += 1;
+            stageType == 1;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Sandthorough";
             string command;
@@ -811,6 +813,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
+            stageType == 2;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Rottenburgh";
             string command;
@@ -889,6 +892,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
+            stageType == 3;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Fractalie";
             string command;
@@ -967,6 +971,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
+            stageType == 4;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Scorched Villa";
             string command;
@@ -1045,6 +1050,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
+            stageType == 5;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Bulwarks Islands";
             string command;
@@ -1123,6 +1129,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
+            stageType == 6;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Arcikhun";
             string command;
@@ -1201,6 +1208,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
+            stageType == 7;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Galvanille";
             string command;
@@ -1279,6 +1287,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
+            stageType == 8;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Duskelh";
             string command;
@@ -1357,6 +1366,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
+            stageType == 9;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: Wynslye";
             string command;
@@ -1436,6 +1446,7 @@ namespace HelloDungeon
             player.searches = maxSearches;
             player.casts = player.maxcasts;
             stage += 1;
+            stageType == 10;
             bool damageCheck = false;
             Console.Title = "Hocus Pocus Cowboys: End of the Line";
             string command;
